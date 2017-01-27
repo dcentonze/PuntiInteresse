@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Punti d'interesse</string>
-    <string name="welcome">Pigia il bottone per iniziare a vedere i punti d'interesse</string>
+    <string name="app_name">PuntiInteresse</string>
+    <string name="welcome">Pigia il bottone per iniziare a vedere i punti di interesse</string>
     <string name="change_text">Cambia testo</string>
+    <string name="press_here">Premi qui</string>
     <string name="change_text_hint">Inserisci Testo</string>
 </resources>

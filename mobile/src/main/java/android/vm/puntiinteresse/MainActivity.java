@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     Button changeBt;
     EditText changeTextEdit;
     MainActivity activity = this;
-    String username;
+    //String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         welcomeTv=(TextView)findViewById(R.id.welcome_tv);
         changeBt=(Button)findViewById(R.id.change_bt);
-        changeTextEdit=(EditText)findViewById(R.id.edit_txt);
+        //changeTextEdit=(EditText)findViewById(R.id.edit_txt);
         changeBt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
