@@ -4,4 +4,7 @@
     <string name="change_text">Cambia testo</string>
     <string name="press_here">Premi qui</string>
     <string name="change_text_hint">Inserisci Testo</string>
+    <string name="location_permission_denied">Accesso alla posizione negato</string>
+    <string name="permission_required_toast">Richiesto accesso alla posizione</string>
+    <string name="permission_rationale_location">Richiesto accesso alla posizione, per essere mostrata</string>
 </resources>
