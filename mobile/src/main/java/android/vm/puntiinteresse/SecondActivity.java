@@ -7,7 +7,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -19,13 +21,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -47,6 +54,7 @@ import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -83,14 +91,25 @@ public class SecondActivity extends AppCompatActivity implements
         nameTv=(TextView)findViewById(R.id.name_tv);
         indirizzoTv=(TextView)findViewById(R.id.indirizzo_tv);
         telefonoTv=(TextView)findViewById(R.id.telefono_tv);
+        imageView=(ImageView) findViewById(R.id.image_view);
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-        imageView=(ImageView)findViewById(R.id.ad_image_view);
-
+        //imageSwitcher.setImageResource(R.drawable.ic_launcher);
+        /*imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+                                     public View makeView() {
+                                         ImageView myView = new ImageView(getApplicationContext());
+                                         return myView;
+                                     }
+                                 });
+        Animation in = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left);
+        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
+        imageSwitcher.setInAnimation(in);
+        imageSwitcher.setOutAnimation(out);
+        */
         MapFragment mMapFragment =
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -126,6 +145,7 @@ public class SecondActivity extends AppCompatActivity implements
         if( mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
             mGoogleApiClient.disconnect();
         }
+        mMap.clear();
         super.onStop();
     }
     /*private void displayPlacePicker() {
@@ -147,11 +167,16 @@ public class SecondActivity extends AppCompatActivity implements
         if( requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK ) {
             displayPlace( PlacePicker.getPlace( data, this ) );
             currentPlace=PlacePicker.getPlace(data,this);
-            mMap.moveCamera(CameraUpdateFactory.zoomBy(16f));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentPlace.getLatLng()));
+            mMap.addMarker(new MarkerOptions().position(currentPlace.getLatLng()).title(currentPlace.getName().toString()));
+            //mMap.moveCamera(CameraUpdateFactory.zoomBy(15f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPlace.getLatLng(),16));
+
+            //mMap.moveCamera(CameraUpdateFactory.zoomBy(15f));
+            mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentPlace.getLatLng(),currentPlace.getLatLng()));
+            placePhotosTask();
             //mStreetView.setPosition(new LatLng(currentPlace.getLatLng().latitude,currentPlace.getLatLng().longitude));
             // Get a PlacePhotoMetadataResult containing metadata for the first 10 photos.
-            PlacePhotoMetadataResult result = Places.GeoDataApi
+           /* PlacePhotoMetadataResult result = Places.GeoDataApi
                     .getPlacePhotos(mGoogleApiClient, currentPlace.getId()).await();
             // Get a PhotoMetadataBuffer instance containing a list of photos (PhotoMetadata).
             if (result != null && result.getStatus().isSuccess()) {
@@ -159,12 +184,12 @@ public class SecondActivity extends AppCompatActivity implements
                 // Get the first photo in the list.
                 PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
                 // Get a full-size bitmap for the photo.
-                Bitmap image = photo.getPhoto(mGoogleApiClient).await()
-                        .getBitmap();
+                Bitmap image = photo.getPhoto(mGoogleApiClient).await().getBitmap();
                 // Get the attribution text.
                 CharSequence attribution = photo.getAttributions();
-               // imageView.setImageBitmap(image);
-            }
+                BitmapDrawable imageBit = new BitmapDrawable(Resources.getSystem(),image);
+                imageSwitcher.setImageDrawable(imageBit);
+            }*/
 
 
         }
@@ -191,13 +216,21 @@ public class SecondActivity extends AppCompatActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap=googleMap;
-        mMap.setOnMyLocationButtonClickListener(this);
+        //mMap.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
         mMap.setOnPoiClickListener(this);
         UiSettings u =mMap.getUiSettings();
+        u.setMyLocationButtonEnabled(false);
         u.setMapToolbarEnabled(true);
         u.setScrollGesturesEnabled(false);
-        u.setZoomGesturesEnabled(false);
+        u.setZoomGesturesEnabled(true);
+        boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+                .getString(R.string.style_json)));
+
+        if (!success) {
+            Log.e(TAG, "Style parsing failed.");
+        }
+
     }
 
     private void enableMyLocation(){
@@ -238,6 +271,7 @@ public class SecondActivity extends AppCompatActivity implements
             showMissingPermissionError();
             mPermissionDenied = false;
         }
+
     }
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
@@ -247,7 +281,7 @@ public class SecondActivity extends AppCompatActivity implements
 
     @Override
     public void onPoiClick(PointOfInterest poi) {
-        mMap.addMarker(new MarkerOptions().position(poi.latLng).title(poi.name));
+
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q="+currentPlace.getAddress()));
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
@@ -263,5 +297,34 @@ public class SecondActivity extends AppCompatActivity implements
     @Override
     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
         mStreetView = streetViewPanorama;
+    }
+    private void placePhotosTask() {
+        final String placeId = currentPlace.getId();
+
+        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
+        new PhotoTask(imageView.getWidth(),imageView.getHeight(),mGoogleApiClient) {
+            @Override
+            protected void onPreExecute() {
+                // Display a temporary image to show while bitmap is loading.
+                imageView.setImageResource(R.drawable.empty_photo);
+            }
+
+            @Override
+            protected void onPostExecute(AttributedPhoto attributedPhoto) {
+                if (attributedPhoto != null) {
+                    // Photo has been loaded, display it.
+                    imageView.setImageBitmap(attributedPhoto.bitmap);
+
+                   /* // Display the attribution as HTML content if set.
+                    if (attributedPhoto.attribution == null) {
+                        mText.setVisibility(View.GONE);
+                    } else {
+                        mText.setVisibility(View.VISIBLE);
+                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
+                    }*/
+
+                }
+            }
+        }.execute(placeId);
     }
 }
