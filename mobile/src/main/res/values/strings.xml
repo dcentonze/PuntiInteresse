@@ -7,7 +7,7 @@
     <string name="location_permission_denied">Accesso alla posizione negato</string>
     <string name="permission_required_toast">Richiesto accesso alla posizione</string>
     <string name="permission_rationale_location">Richiesto accesso alla posizione, per essere mostrata</string>
-    <string name="style_json">[
+   <!-- <string name="style_json">[
   {
     "featureType": "poi.business",
     "stylers": [
@@ -60,5 +60,5 @@
 
 
 
-</string>
+</string>-->
 </resources>
