@@ -34,6 +34,7 @@
        android:layout_centerHorizontal="true"
        android:layout_below="@+id/indirizzo_tv"
        android:textSize="13dp"
+       android:clickable="true"
 
        />
 
@@ -46,13 +47,14 @@
        android:layout_below="@+id/indirizzo_tv"
         />
 
-    <ImageView
-        android:id="@+id/image_view"
+    <ImageSwitcher
+        android:id="@+id/image_switch"
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/map"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:clickable="true"/>
 
 
   <!-- <fragment

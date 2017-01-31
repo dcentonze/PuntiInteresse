@@ -11,6 +11,8 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.Places;
 
+import java.util.ArrayList;
+
 /**
  * Created by acbes on 30/01/2017.
  */
@@ -46,16 +48,21 @@ abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPho
 
         if (result.getStatus().isSuccess()) {
             PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
+            PlacePhotoMetadata photo;
+            attributedPhoto = new AttributedPhoto();
+            ArrayList<BitmapDrawable> imageBit  = new ArrayList<>();
             if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
-                // Get the first bitmap and its attributions.
-                PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
+                for (int i = 0; i < photoMetadataBuffer.getCount(); i++){
+                    // Get the first bitmap and its attributions.
+                    photo = photoMetadataBuffer.get(i);
                 CharSequence attribution = photo.getAttributions();
                 // Load a scaled bitmap for this photo.
                 Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
                         .getBitmap();
 
-                //BitmapDrawable imageBit = new BitmapDrawable(Resources.getSystem(),image);
-                attributedPhoto = new AttributedPhoto(attribution, image);
+                imageBit.add(new BitmapDrawable(Resources.getSystem(), image));
+                attributedPhoto.addBitmap(imageBit.get(i));
+            }
             }
             // Release the PlacePhotoMetadataBuffer.
             photoMetadataBuffer.release();
@@ -68,13 +75,14 @@ abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPho
      */
     class AttributedPhoto {
 
-        public final CharSequence attribution;
+       // public final CharSequence attribution;
 
-        public final Bitmap bitmap;
+        public final ArrayList <BitmapDrawable> bitmap=new ArrayList<>();
 
-        public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
-            this.attribution = attribution;
-            this.bitmap = bitmap;
+        public AttributedPhoto() {
+        }
+        public void addBitmap (BitmapDrawable bitmap){
+            this.bitmap.add(bitmap);
         }
     }
 }

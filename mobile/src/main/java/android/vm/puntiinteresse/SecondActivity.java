@@ -25,6 +25,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -69,9 +70,9 @@ public class SecondActivity extends AppCompatActivity implements
         GoogleMap.OnPoiClickListener,
         GoogleApiClient.OnConnectionFailedListener,
         OnStreetViewPanoramaReadyCallback{
-
     TextView nameTv,indirizzoTv,telefonoTv;
     Intent intent;
+    int currentIndex = 0;
     String username;
     StreetViewPanorama mStreetView;
     private boolean mPermissionDenied = false;
@@ -81,7 +82,7 @@ public class SecondActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     Place currentPlace;
-    ImageView imageView;
+    ImageSwitcher imageSwitcher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -91,7 +92,7 @@ public class SecondActivity extends AppCompatActivity implements
         nameTv=(TextView)findViewById(R.id.name_tv);
         indirizzoTv=(TextView)findViewById(R.id.indirizzo_tv);
         telefonoTv=(TextView)findViewById(R.id.telefono_tv);
-        imageView=(ImageView) findViewById(R.id.image_view);
+        imageSwitcher=(ImageSwitcher) findViewById(R.id.image_switch);
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -99,7 +100,7 @@ public class SecondActivity extends AppCompatActivity implements
                 .enableAutoManage(this, this)
                 .build();
         //imageSwitcher.setImageResource(R.drawable.ic_launcher);
-        /*imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+        imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
                                      public View makeView() {
                                          ImageView myView = new ImageView(getApplicationContext());
                                          return myView;
@@ -109,7 +110,7 @@ public class SecondActivity extends AppCompatActivity implements
         Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
         imageSwitcher.setInAnimation(in);
         imageSwitcher.setOutAnimation(out);
-        */
+
         MapFragment mMapFragment =
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -302,18 +303,28 @@ public class SecondActivity extends AppCompatActivity implements
         final String placeId = currentPlace.getId();
 
         // Create a new AsyncTask that displays the bitmap and attribution once loaded.
-        new PhotoTask(imageView.getWidth(),imageView.getHeight(),mGoogleApiClient) {
+        new PhotoTask(imageSwitcher.getWidth(),imageSwitcher.getHeight(),mGoogleApiClient) {
             @Override
             protected void onPreExecute() {
                 // Display a temporary image to show while bitmap is loading.
-                imageView.setImageResource(R.drawable.empty_photo);
+                imageSwitcher.setImageResource(R.drawable.empty_photo);
             }
 
             @Override
-            protected void onPostExecute(AttributedPhoto attributedPhoto) {
+            protected void onPostExecute(final AttributedPhoto attributedPhoto) {
                 if (attributedPhoto != null) {
                     // Photo has been loaded, display it.
-                    imageView.setImageBitmap(attributedPhoto.bitmap);
+                    imageSwitcher.setImageDrawable(attributedPhoto.bitmap.get(currentIndex));
+                    imageSwitcher.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //  Check If index reaches maximum then reset it
+                            currentIndex++;
+                            if (currentIndex == attributedPhoto.bitmap.size())
+                                currentIndex = 0;
+                            imageSwitcher.setImageDrawable(attributedPhoto.bitmap.get(currentIndex)); // set the image in ImageSwitcher
+                        }
+                    });
 
                    /* // Display the attribution as HTML content if set.
                     if (attributedPhoto.attribution == null) {
