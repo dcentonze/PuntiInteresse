@@ -37,11 +37,9 @@ public class MainActivity extends FragmentActivity implements
 
     TextView welcomeTv;
     Button changeBt;
-    EditText changeTextEdit;
+
     MainActivity activity = this;
-    //String username;
-    int PLACE_PICKER_REQUEST=1;
-    GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
@@ -55,10 +53,7 @@ public class MainActivity extends FragmentActivity implements
         changeBt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                //welcomeTv.setText(changeTextEdit.getText());
-                //username=changeTextEdit.getText().toString();
                 Intent intent = new Intent(activity,SecondActivity.class);
-                //intent.putExtra("username",username);
                 startActivity(intent);
 
 
