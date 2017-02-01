@@ -55,7 +55,6 @@ abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPho
                 for (int i = 0; i < photoMetadataBuffer.getCount(); i++){
                     // Get the first bitmap and its attributions.
                     photo = photoMetadataBuffer.get(i);
-                CharSequence attribution = photo.getAttributions();
                 // Load a scaled bitmap for this photo.
                 Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
                         .getBitmap();

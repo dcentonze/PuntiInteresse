@@ -21,6 +21,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -72,9 +74,6 @@ public class SecondActivity extends AppCompatActivity implements
         OnStreetViewPanoramaReadyCallback{
     TextView nameTv,indirizzoTv,telefonoTv;
     Intent intent;
-    int currentIndex = 0;
-    String username;
-    StreetViewPanorama mStreetView;
     private boolean mPermissionDenied = false;
     private static final String TAG = SecondActivity.class.getSimpleName();
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -82,7 +81,9 @@ public class SecondActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     Place currentPlace;
-    ImageSwitcher imageSwitcher;
+    private RecyclerView mRecyclerView;
+    private MyRecyclerViewAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -92,36 +93,19 @@ public class SecondActivity extends AppCompatActivity implements
         nameTv=(TextView)findViewById(R.id.name_tv);
         indirizzoTv=(TextView)findViewById(R.id.indirizzo_tv);
         telefonoTv=(TextView)findViewById(R.id.telefono_tv);
-        imageSwitcher=(ImageSwitcher) findViewById(R.id.image_switch);
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-        //imageSwitcher.setImageResource(R.drawable.ic_launcher);
-        imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
-                                     public View makeView() {
-                                         ImageView myView = new ImageView(getApplicationContext());
-                                         return myView;
-                                     }
-                                 });
-        Animation in = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left);
-        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
-        imageSwitcher.setInAnimation(in);
-        imageSwitcher.setOutAnimation(out);
 
         MapFragment mMapFragment =
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
         intent = getIntent();
-       // if( mGoogleApiClient == null || !mGoogleApiClient.isConnected() )
-         //   return;
-        //StreetViewPanoramaFragment streetViewPanoramaFragment =
-          //      (StreetViewPanoramaFragment) getFragmentManager()
-            //            .findFragmentById(R.id.streetviewpanorama);
-        //streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
-
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
 
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
@@ -149,48 +133,18 @@ public class SecondActivity extends AppCompatActivity implements
         mMap.clear();
         super.onStop();
     }
-    /*private void displayPlacePicker() {
-        if( mGoogleApiClient == null || !mGoogleApiClient.isConnected() )
-            return;
 
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
-        try {
-            startActivityForResult( builder.build( this ), PLACE_PICKER_REQUEST );
-        } catch ( GooglePlayServicesRepairableException e ) {
-            Log.d( "PlacesAPI Demo", "GooglePlayServicesRepairableException thrown" );
-        } catch ( GooglePlayServicesNotAvailableException e ) {
-            Log.d( "PlacesAPI Demo", "GooglePlayServicesNotAvailableException thrown" );
-        }
-    }*/
 
     protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
         if( requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK ) {
             displayPlace( PlacePicker.getPlace( data, this ) );
             currentPlace=PlacePicker.getPlace(data,this);
             mMap.addMarker(new MarkerOptions().position(currentPlace.getLatLng()).title(currentPlace.getName().toString()));
-            //mMap.moveCamera(CameraUpdateFactory.zoomBy(15f));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPlace.getLatLng(),16));
-
-            //mMap.moveCamera(CameraUpdateFactory.zoomBy(15f));
             mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentPlace.getLatLng(),currentPlace.getLatLng()));
             placePhotosTask();
-            //mStreetView.setPosition(new LatLng(currentPlace.getLatLng().latitude,currentPlace.getLatLng().longitude));
-            // Get a PlacePhotoMetadataResult containing metadata for the first 10 photos.
-           /* PlacePhotoMetadataResult result = Places.GeoDataApi
-                    .getPlacePhotos(mGoogleApiClient, currentPlace.getId()).await();
-            // Get a PhotoMetadataBuffer instance containing a list of photos (PhotoMetadata).
-            if (result != null && result.getStatus().isSuccess()) {
-                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
-                // Get the first photo in the list.
-                PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
-                // Get a full-size bitmap for the photo.
-                Bitmap image = photo.getPhoto(mGoogleApiClient).await().getBitmap();
-                // Get the attribution text.
-                CharSequence attribution = photo.getAttributions();
-                BitmapDrawable imageBit = new BitmapDrawable(Resources.getSystem(),image);
-                imageSwitcher.setImageDrawable(imageBit);
-            }*/
+
+
 
 
         }
@@ -297,43 +251,24 @@ public class SecondActivity extends AppCompatActivity implements
 
     @Override
     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
-        mStreetView = streetViewPanorama;
     }
     private void placePhotosTask() {
         final String placeId = currentPlace.getId();
 
         // Create a new AsyncTask that displays the bitmap and attribution once loaded.
-        new PhotoTask(imageSwitcher.getWidth(),imageSwitcher.getHeight(),mGoogleApiClient) {
+        new PhotoTask(mRecyclerView.getWidth(),mRecyclerView.getHeight(),mGoogleApiClient) {
             @Override
             protected void onPreExecute() {
                 // Display a temporary image to show while bitmap is loading.
-                imageSwitcher.setImageResource(R.drawable.empty_photo);
+                //imageSwitcher.setImageResource(R.drawable.empty_photo);
             }
 
             @Override
             protected void onPostExecute(final AttributedPhoto attributedPhoto) {
                 if (attributedPhoto != null) {
                     // Photo has been loaded, display it.
-                    imageSwitcher.setImageDrawable(attributedPhoto.bitmap.get(currentIndex));
-                    imageSwitcher.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //  Check If index reaches maximum then reset it
-                            currentIndex++;
-                            if (currentIndex == attributedPhoto.bitmap.size())
-                                currentIndex = 0;
-                            imageSwitcher.setImageDrawable(attributedPhoto.bitmap.get(currentIndex)); // set the image in ImageSwitcher
-                        }
-                    });
-
-                   /* // Display the attribution as HTML content if set.
-                    if (attributedPhoto.attribution == null) {
-                        mText.setVisibility(View.GONE);
-                    } else {
-                        mText.setVisibility(View.VISIBLE);
-                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
-                    }*/
-
+                    adapter = new MyRecyclerViewAdapter(attributedPhoto.bitmap,SecondActivity.this);
+                    mRecyclerView.setAdapter(adapter);
                 }
             }
         }.execute(placeId);
