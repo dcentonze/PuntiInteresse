@@ -47,7 +47,6 @@ public class MainActivity extends FragmentActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        welcomeTv=(TextView)findViewById(R.id.welcome_tv);
         changeBt=(Button)findViewById(R.id.change_bt);
 
 

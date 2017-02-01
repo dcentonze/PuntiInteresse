@@ -2,34 +2,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blu"
     >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:id="@+id/welcome_tv"
-        android:text="@string/welcome"
-        />
-
-    <!--
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/edit_txt"
-        android:hint="@string/change_text_hint"
-        />
-    -->
-    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+       android:text="Premi il bottone per iniziare"
+        android:gravity="center"
+        android:textColor="@color/bianco"/>
+    <Button
         android:id="@+id/change_bt"
-        android:text="@string/press_here"
-        android:layout_below="@id/welcome_tv"
-
-        />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/testo_bottone1"
+        android:drawableLeft="@drawable/mappaicona"
+        android:textSize="24sp"
+        android:theme="@style/MioBottone1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="pressChange_bt"
+        android:layout_marginBottom="10dp"/>
 
 
 </RelativeLayout>

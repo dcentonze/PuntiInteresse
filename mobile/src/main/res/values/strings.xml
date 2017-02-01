@@ -7,6 +7,7 @@
     <string name="location_permission_denied">Accesso alla posizione negato</string>
     <string name="permission_required_toast">Richiesto accesso alla posizione</string>
     <string name="permission_rationale_location">Richiesto accesso alla posizione, per essere mostrata</string>
+  <string name="testo_bottone1">Premi Qui</string>
     <string name="style_json">[
   [
   {
