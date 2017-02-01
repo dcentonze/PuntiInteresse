@@ -33,6 +33,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -83,7 +84,7 @@ public class SecondActivity extends AppCompatActivity implements
     Place currentPlace;
     private RecyclerView mRecyclerView;
     private MyRecyclerViewAdapter adapter;
-
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -106,7 +107,7 @@ public class SecondActivity extends AppCompatActivity implements
         intent = getIntent();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
         try {
@@ -261,10 +262,12 @@ public class SecondActivity extends AppCompatActivity implements
             protected void onPreExecute() {
                 // Display a temporary image to show while bitmap is loading.
                 //imageSwitcher.setImageResource(R.drawable.empty_photo);
+                progressBar.setVisibility(View.VISIBLE);
             }
 
             @Override
             protected void onPostExecute(final AttributedPhoto attributedPhoto) {
+                progressBar.setVisibility(View.GONE);
                 if (attributedPhoto != null) {
                     // Photo has been loaded, display it.
                     adapter = new MyRecyclerViewAdapter(attributedPhoto.bitmap,SecondActivity.this);
