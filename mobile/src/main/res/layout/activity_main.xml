@@ -8,21 +8,59 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/testo1"
         android:textStyle="bold"
         android:textSize="14sp"
-        android:text="1. Premi il bottone per iniziare
-
-2. Scegli un punto d'interesse oppure cercalo nell'apposita casella di ricerca
-
-3. Verranno mostrate le informazioni relative al luogo
-
-4. Premendo sul punto d'interesse partirà il navigatore al luogo selezionato
-
-5. Premendo sul numero di telefono, verrai ridirezionato al Dialer
-
-6. In basso saranno mostrate, se presenti, le immagini del luogo"
+        android:text="1. Premi il bottone per iniziare\n"
         android:textColor="@color/bianco"
-        android:layout_centerInParent="true"/>
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/testo2"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="2. Scegli un punto d'interesse oppure cercalo nell'apposita casella di ricerca\n"
+        android:textColor="@color/bianco"
+        android:layout_below="@+id/testo1"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/testo3"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="3. Verranno mostrate le informazioni relative al luogo\n"
+        android:textColor="@color/bianco"
+        android:layout_below="@+id/testo2"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/testo4"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="4. Premendo sul punto d'interesse partirà il navigatore al luogo selezionato\n"
+        android:textColor="@color/bianco"
+        android:layout_below="@+id/testo3"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/testo5"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="5. Premendo sul numero di telefono, verrai ridirezionato al Dialer\n"
+        android:textColor="@color/bianco"
+        android:layout_below="@+id/testo4"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/testo6"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="6. In basso saranno mostrate, se presenti, le immagini del luogo\n"
+        android:textColor="@color/bianco"
+        android:layout_below="@+id/testo5"/>
+
     <Button
         android:id="@+id/change_bt"
         android:layout_width="fill_parent"
@@ -36,7 +74,7 @@
         android:layout_centerHorizontal="true"
         android:onClick="pressChange_bt"
         android:textStyle="bold"
-        android:layout_alignParentBottom="true"/>
+        android:layout_below="@+id/testo6"/>
 
 
 </RelativeLayout>
