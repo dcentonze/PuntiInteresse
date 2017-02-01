@@ -8,9 +8,21 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:text="Premi il bottone per iniziare"
-        android:gravity="center"
-        android:textColor="@color/bianco"/>
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="1. Premi il bottone per iniziare
+
+2. Scegli un punto d'interesse oppure cercalo nell'apposita casella di ricerca
+
+3. Verranno mostrate le informazioni relative al luogo
+
+4. Premendo sul punto d'interesse partirà il navigatore al luogo selezionato
+
+5. Premendo sul numero di telefono, verrai ridirezionato al Dialer
+
+6. In basso saranno mostrate, se presenti, le immagini del luogo"
+        android:textColor="@color/bianco"
+        android:layout_centerInParent="true"/>
     <Button
         android:id="@+id/change_bt"
         android:layout_width="fill_parent"
@@ -18,12 +30,13 @@
         android:padding="16dp"
         android:text="@string/testo_bottone1"
         android:drawableLeft="@drawable/mappaicona"
-        android:textSize="24sp"
+        android:textSize="14sp"
+        android:textAlignment="center"
         android:theme="@style/MioBottone1"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:onClick="pressChange_bt"
-        android:layout_marginBottom="10dp"/>
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"/>
 
 
 </RelativeLayout>
