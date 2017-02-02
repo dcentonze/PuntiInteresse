@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -75,6 +76,7 @@ public class SecondActivity extends AppCompatActivity implements
         OnStreetViewPanoramaReadyCallback{
     TextView nameTv,indirizzoTv,telefonoTv;
     Intent intent;
+    private BottomSheetBehavior mBottomSheetBehavior;
     private boolean mPermissionDenied = false;
     private static final String TAG = SecondActivity.class.getSimpleName();
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -82,7 +84,7 @@ public class SecondActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     Place currentPlace;
-    private RecyclerView mRecyclerView;
+        private RecyclerView mRecyclerView;
     private MyRecyclerViewAdapter adapter;
     private ProgressBar progressBar;
     @Override
@@ -90,7 +92,7 @@ public class SecondActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
+        View bottomSheet = findViewById(R.id.bottom_sheet);
         nameTv=(TextView)findViewById(R.id.name_tv);
         indirizzoTv=(TextView)findViewById(R.id.indirizzo_tv);
         telefonoTv=(TextView)findViewById(R.id.telefono_tv);
@@ -100,7 +102,7 @@ public class SecondActivity extends AppCompatActivity implements
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         MapFragment mMapFragment =
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -119,7 +121,7 @@ public class SecondActivity extends AppCompatActivity implements
         }
 
         // username=intent.getStringExtra("username");
-        //nameTv.setText(username);
+        //nameTv.setText(username);*/
     }@Override
     protected void onStart() {
         super.onStart();
@@ -237,11 +239,11 @@ public class SecondActivity extends AppCompatActivity implements
 
     @Override
     public void onPoiClick(PointOfInterest poi) {
-
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("google.navigation:q="+currentPlace.getAddress()));
-        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-        startActivity(intent);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                //Uri.parse("google.navigation:q="+currentPlace.getAddress()));
+        //intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        //startActivity(intent);
 
     }
 
